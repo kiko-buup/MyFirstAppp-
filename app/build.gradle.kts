@@ -9,6 +9,9 @@ android {
             minorApiLevel = 1
         }
     }
+    buildFeatures {
+        viewBinding = true
+    }
 
     defaultConfig {
         applicationId = "ru.kosterina.myfirstappp"
