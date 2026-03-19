@@ -1,66 +1,55 @@
 package ru.kosterina.myfirstappp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import ru.kosterina.myfirstappp.databinding.ActivityMainBinding
 import ru.kosterina.myfirstappp.dto.Post
+import ru.kosterina.myfirstappp.viewmodel.PostViewModel
 import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var post: Post
+
+    // Делегирование создания ViewModel
+    private val viewModel: PostViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // 1. Создаем экземпляр Binding
-        binding = ActivityMainBinding.inflate(layoutInflater) // Инициализируем поле класса!
+        println("Activity: onCreate")
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 2. Устанавливаем корневой View как content view
-        setContentView(binding.root)
+        // Подписываемся на изменения данных
+        viewModel.data.observe(this) { post ->
+            // Этот код будет выполняться каждый раз, когда данные изменяются
+            bindPost(post)
+        }
 
-        // 3. Создаем тестовые данные
-        post = Post(
-            id = 1,
-            author = "Нетология. Университет интернет-профессий",
-            content = "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов.",
-            published = "21 мая в 18:36",
-            likedByMe = false,
-            likes = 999,
-            shares = 25,
-            views = 5700
-        )
-
-        // 4. Отображаем данные на экране
-        bindPost(post)
-
-        // 5. Обработка кликов
         setupClickListeners()
     }
 
     private fun bindPost(post: Post) {
-        // Используем View Binding для доступа к View
         binding.apply {
-            author.text = post.author as CharSequence?
-            published.text = post.published as CharSequence?
-            content.text = post.content as CharSequence?
+            author.text = post.author
+            published.text = post.published
+            content.text = post.content
 
-            // Устанавливаем текст для счетчиков с форматированием
+            // Форматируем и отображаем счетчики
             likeCount.text = formatCount(post.likes)
             shareCount.text = formatCount(post.shares)
             viewsCount.text = formatCount(post.views)
 
-            // Устанавливаем правильную иконку лайка в зависимости от состояния
+            // Устанавливаем иконку лайка в зависимости от состояния
             if (post.likedByMe) {
                 like.setImageResource(R.drawable.favorite_border)
             } else {
                 like.setImageResource(R.drawable.like_border)
             }
 
-            // Пример с ссылкой (заполняем, если есть)
+            // Пример с ссылкой
             linkTitle.text = "Новая Нетология: 4 уровня карьеры"
             linkUrl.text = "netology.ru"
         }
@@ -68,47 +57,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.apply {
-            // Обработка лайка
+            // Обработка лайка - вызываем метод ViewModel
             like.setOnClickListener {
-                // Меняем состояние
-                post = post.copy(
-                    likedByMe = !post.likedByMe,
-                    likes = if (post.likedByMe) post.likes - 1 else post.likes + 1
-                )
-
-                // Обновляем отображение
-                bindPost(post)
-
-                // Показываем подсказку (для наглядности)
-                Toast.makeText(this@MainActivity,
-                    if (post.likedByMe) "Лайк поставлен" else "Лайк убран",
-                    Toast.LENGTH_SHORT).show()
+                viewModel.like()
+                Toast.makeText(this@MainActivity, "Лайк", Toast.LENGTH_SHORT).show()
             }
 
-            // Обработка репоста
+            // Обработка репоста - вызываем метод ViewModel
             share.setOnClickListener {
-                // Увеличиваем счетчик репостов на 1
-                post = post.copy(
-                    shares = post.shares + 1
-                )
-
-                // Обновляем отображение
-                bindPost(post)
-
+                viewModel.share()
                 Toast.makeText(this@MainActivity, "Репост +1", Toast.LENGTH_SHORT).show()
             }
 
-            // Обработка меню (просто показать сообщение)
             menu.setOnClickListener {
                 Toast.makeText(this@MainActivity, "Меню поста", Toast.LENGTH_SHORT).show()
             }
 
-            // Обработка аватарки
             avatar.setOnClickListener {
                 Toast.makeText(this@MainActivity, "Профиль автора", Toast.LENGTH_SHORT).show()
+                // Увеличиваем просмотры при клике на аватар (для примера)
+                viewModel.increaseViews()
             }
 
-            // Обработка всего корневого layout (для исследования)
+            // Для исследования поведения
             root.setOnClickListener {
                 println("CLICK: корневой layout")
                 Toast.makeText(this@MainActivity, "Клик по фону", Toast.LENGTH_SHORT).show()
@@ -117,29 +88,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     /*
-    Форматирует число в удобочитаемый вид:
-    999 -> 999
-    1000 -> 1K
-    1100 -> 1.1K
-    10000 -> 10K
-    11000 -> 11K (сотни не отображаются после 10K)
-    1000000 -> 1M
-    1300000 -> 1.3M
+    Форматирует число в удобочитаемый вид (скопировано с прошлого занятия)
     */
     private fun formatCount(count: Int): String {
         return when {
             count >= 1_000_000 -> {
                 val millions = count / 1_000_000.0
-                // Если число миллионов целое, показываем без десятых
                 if (millions % 1.0 == 0.0) {
                     "${millions.toInt()}M"
                 } else {
-                    // Оставляем один знак после запятой
                     DecimalFormat(".").format(millions) + "M"
                 }
             }
             count >= 10_000 -> {
-                // После 10К сотни не показываем
                 "${count / 1000}K"
             }
             count >= 1_000 -> {
@@ -152,5 +113,29 @@ class MainActivity : AppCompatActivity() {
             }
             else -> count.toString()
         }
+    }
+    override fun onStart() {
+        super.onStart()
+        println("Activity: onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        println("Activity: onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        println("Activity: onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        println("Activity: onStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("Activity: onDestroy")
     }
 }
