@@ -6,46 +6,110 @@ import ru.kosterina.myfirstappp.dto.Post
 
 class PostRepositoryInMemoryImpl : PostRepository {
 
-    // Исходные данные
-    private var post = Post(
-        id = 1,
-        author = "Нетология. Университет интернет-профессий",
-        content = "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов.",
-        published = "21 мая в 18:36",
-        likedByMe = false,
-        likes = 999,
-        shares = 25,
-        views = 5700
+    // Теперь это список, а не один пост
+    private var posts = listOf(
+        Post(
+            id = 1,
+            author = "Авто-магазин",
+            content = "Dodge Challenger — культовый американский маслкар с мощным двигателем V8.Главные особенности:Двигатель: 6.2-литровый Hemi V8Мощность: до 1025 л.с.Динамика: разгон до 100 км/ч за 1.6 секундыМаксимальная скорость: 346 км/чГабариты: длина 5 метровАвтомобиль сочетает классический американский дизайн с современными технологиями. Оснащён 8-ступенчатой АКПП и задним приводом.Challenger остаётся верным традициям мускул-каров, предлагая впечатляющую мощность в стильном купе.",
+            published = "21 мая в 18:36",
+            likedByMe = false,
+            likes = 999,
+            shares = 25,
+            views = 5700
+        ),
+        Post(
+            id = 2,
+            author = "Тюнинг Авто",
+            content = "«Автотюнинг: новые горизонты возможностей»Ваш автомобиль заслуживает лучшего! Узнайте о последних трендах в мире тюнинга и модернизации..",
+            published = "22 мая в 10:15",
+            likedByMe = false,
+            likes = 342,
+            shares = 89,
+            views = 2300
+        ),
+        Post(
+            id = 3,
+            author = "Формула скорости: Lamborghini Aventador SVJ",
+            content = "Абсолютный рекорд Нюрбургринга среди серийных автомобилей! Aventador SVJ демонстрирует, что значит настоящая мощность и контроль на пределе возможностей.",
+            published = "23 мая в 09:42",
+            likedByMe = true,
+            likes = 1250,
+            shares = 420,
+            views = 8900
+        ),
+        Post(
+            id = 4,
+            author = "Легенды ралли: Subaru Impreza WRC",
+            content = "Неукротимая Impreza возвращается в историю! Как японский седан стал королём гравия и покорил сердца фанатов ралли",
+            published = "26 мая в 13:40",
+            likedByMe = false,
+            likes = 5678,
+            shares = 1234,
+            views = 45000
+
+        ) ,
+        Post(
+            id = 5,
+            author = "Классика автоспорта: Ford GT40",
+            content = "Легенда Ле-Мана возвращается! История победы GT40 над Ferrari и возрождения культового суперкара",
+            published = "29 мая в 10:00",
+            likedByMe = false,
+            likes = 5678,
+            shares = 1234,
+            views = 45000
+
+        ),
+        Post(
+            id = 6,
+            author = "Дрифт-культура: Nissan Skyline GT-R",
+            content = "Король дрифта в новом обличии! Skyline GT-R продолжает традиции легендарного R34 на современных трассах",
+            published = "25 мая в 23:50",
+            likedByMe = false,
+            likes = 5678,
+            shares = 1234,
+            views = 45000
+
+        )
     )
 
-    // MutableLiveData, который можно изменять
-    private val _data = MutableLiveData(post)
+    private val _data = MutableLiveData(posts)
 
-    // Внешний доступ только для чтения (LiveData, а не MutableLiveData)
-    override fun get(): LiveData<Post> = _data
+    override fun getAll(): LiveData<List<Post>> = _data
 
-    override fun like() {
-        // Меняем состояние лайка на противоположное
-        post = post.copy(
-            likedByMe = !post.likedByMe,
-            likes = if (post.likedByMe) post.likes - 1 else post.likes + 1
-        )
-        // Оповещаем подписчиков об изменении
-        _data.value = post
+    override fun likeById(id: Long) {
+        posts = posts.map { post ->
+            if (post.id == id) {
+                post.copy(
+                    likedByMe = !post.likedByMe,
+                    likes = if (post.likedByMe) post.likes - 1 else post.likes + 1
+                )
+            } else {
+                post
+            }
+        }
+        _data.value = posts
     }
 
-    override fun share() {
-        post = post.copy(
-            shares = post.shares + 1
-        )
-        _data.value = post
+    override fun shareById(id: Long) {
+        posts = posts.map { post ->
+            if (post.id == id) {
+                post.copy(shares = post.shares + 1)
+            } else {
+                post
+            }
+        }
+        _data.value = posts
     }
 
-    override fun increaseViews() {
-        // Можно будет реализовать позже
-        post = post.copy(
-            views = post.views + 1
-        )
-        _data.value = post
+    override fun increaseViews(id: Long) {
+        posts = posts.map { post ->
+            if (post.id == id) {
+                post.copy(views = post.views + 1)
+            } else {
+                post
+            }
+        }
+        _data.value = posts
     }
 }
