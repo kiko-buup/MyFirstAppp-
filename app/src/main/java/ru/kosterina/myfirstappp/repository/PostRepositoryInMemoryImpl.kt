@@ -48,7 +48,7 @@ class PostRepositoryInMemoryImpl : PostRepository {
             content = "Абсолютный рекорд Нюрбургринга среди серийных автомобилей! Aventador SVJ демонстрирует, что значит настоящая мощность и контроль на пределе возможностей.",
             published = "23 мая в 09:42",
             likedByMe = true,
-            likes = 1250,
+            likes = 1050,
             shares = 420,
             views = 8900
         ),
@@ -59,7 +59,7 @@ class PostRepositoryInMemoryImpl : PostRepository {
             content = "Неукротимая Impreza возвращается в историю! Как японский седан стал королём гравия и покорил сердца фанатов ралли",
             published = "26 мая в 13:40",
             likedByMe = false,
-            likes = 5678,
+            likes = 5078,
             shares = 1234,
             views = 45000
 
@@ -71,9 +71,9 @@ class PostRepositoryInMemoryImpl : PostRepository {
             content = "Легенда Ле-Мана возвращается! История победы GT40 над Ferrari и возрождения культового суперкара",
             published = "29 мая в 10:00",
             likedByMe = false,
-            likes = 5678,
-            shares = 1234,
-            views = 45000
+            likes = 100,
+            shares = 1000,
+            views = 10000
 
         ),
         Post(
@@ -83,11 +83,59 @@ class PostRepositoryInMemoryImpl : PostRepository {
             content = "Король дрифта в новом обличии! Skyline GT-R продолжает традиции легендарного R34 на современных трассах",
             published = "25 мая в 23:50",
             likedByMe = false,
-            likes = 5678,
-            shares = 1234,
-            views = 45000
+            likes = 40,
+            shares = 20000,
+            views = 30000
 
-        )
+        ),
+        Post(
+            id = 7,
+            author = "Porsche 911: эволюция легенды",
+            authorId = 8,
+            content = "В 1960‑х Ford бросил вызов Ferrari в Ле‑Мане. После провалов 1964–1965 годов инженеры переработали GT40 — и в 1966‑м он финишировал первым, вторым и третьим, положив конец господству итальянцев. Легенда родилась!",
+            published = "1 мая в 11:00",
+            likedByMe = false,
+            likes = 2000,
+            shares = 1000,
+            views = 3000
+
+        ),
+        Post(
+            id = 8,
+            author = "Aston Martin Valhalla: гибрид мечты",
+            authorId = 9,
+            content = "Aston Martin Valhalla сочетает V6 с двойным турбонаддувом и электромотор — суммарно 950 л. с. Разгон до 100 км/ч — за 2,5 с, максимальная скорость — 330 км/ч. Футуристичный дизайн и гоночные технологии делают его одним из самых желанных гиперкаров 2024 года",
+            published = "2 мая в 23:59",
+            likedByMe = false,
+            likes = 900,
+            shares = 300,
+            views = 2000
+
+        ),
+        Post(
+            id = 9,
+            author = "Mitsubishi Lancer Evolution: икона ралли",
+            authorId = 10,
+            content = "Mitsubishi Lancer Evolution — легенда ралли 90‑х и 2000‑х. Его секрет — в турбированном моторе 4G63T, системе полного привода S‑AWC и жёстком кузове.",
+            published = "6 мая в 19:00",
+            likedByMe = false,
+            likes = 758,
+            shares = 400,
+            views = 2000
+
+        ),
+        Post(
+            id = 10,
+            author = "УАЗ‑452: друг бездорожья",
+            authorId = 11,
+            content = "Моя «Буханка» (УАЗ‑452) — не про комфорт, а про свободу. Жёстко, шумно, тряско — зато не подведёт там, где нет дорог.",
+            published = "29 мая в 10:00",
+            likedByMe = false,
+            likes = 678,
+            shares = 500,
+            views = 1000
+
+        ),
     )
 
     private val _data = MutableLiveData(posts)
