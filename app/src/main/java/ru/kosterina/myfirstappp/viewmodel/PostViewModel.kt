@@ -4,20 +4,24 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import ru.kosterina.myfirstappp.db.AppDb
 import ru.kosterina.myfirstappp.dto.Post
 import ru.kosterina.myfirstappp.repository.PostRepository
 import ru.kosterina.myfirstappp.repository.PostRepositoryFileImpl  // или другую реализацию
+import ru.kosterina.myfirstappp.repository.PostRepositorySQLiteImpl
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Используем файловую реализацию с передачей контекста приложения
-    private val repository: PostRepository = PostRepositoryFileImpl(application)
+    // Используем SQLite репозиторий
+    private val repository: PostRepository = PostRepositorySQLiteImpl(
+        AppDb.getInstance(application).postDao
+    )
 
     val data: LiveData<List<Post>> = repository.getAll()
 
     private val empty = Post(
         id = 0,
-        author = "",
+        author = "Я",
         content = "",
         published = ""
     )
@@ -62,5 +66,4 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         _editingMode.value = false
     }
 
-    fun saveEditedPost(editingPostId: Long, text: String) {}
 }
